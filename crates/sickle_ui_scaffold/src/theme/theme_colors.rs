@@ -70,7 +70,7 @@ pub mod loader {
 
         async fn load<'a>(
             &'a self,
-            reader: &'a mut Reader<'_>,
+            reader: &'a mut dyn Reader,
             _settings: &'a Self::Settings,
             _load_context: &'a mut LoadContext<'_>,
         ) -> Result<Self::Asset, Self::Error> {

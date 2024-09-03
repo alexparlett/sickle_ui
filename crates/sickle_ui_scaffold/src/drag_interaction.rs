@@ -80,11 +80,11 @@ fn update_cursor_confinement_from_drag(
         .iter()
         .find(|&draggable| draggable.state == DragState::DragStart)
     {
-        window.cursor.grab_mode = CursorGrabMode::Confined;
+        window.cursor_options.grab_mode = CursorGrabMode::Confined;
     } else if let Some(_) = q_draggable.iter().find(|&draggable| {
         draggable.state == DragState::DragEnd || draggable.state == DragState::DragCanceled
     }) {
-        window.cursor.grab_mode = CursorGrabMode::None;
+        window.cursor_options.grab_mode = CursorGrabMode::None;
     }
 }
 

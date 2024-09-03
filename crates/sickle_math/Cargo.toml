@@ -8,7 +8,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/UmbraLuminosa/sickle_ui"
 
 [dependencies]
-bevy_color = "0.14.0"
-bevy_reflect = "0.14.0"
-bevy_ui = "0.14.0"
+bevy_color = { git = "https://github.com/bevyengine/bevy" }
+bevy_reflect = { git = "https://github.com/bevyengine/bevy"}
+bevy_ui = { git = "https://github.com/bevyengine/bevy" }
 serde = { version = "1.0", features = ["derive"] }

@@ -143,7 +143,7 @@ pub trait SetImageExt {
 
 impl SetImageExt for UiStyle<'_> {
     fn image(&mut self, source: ImageSource) -> &mut Self {
-        self.commands.add(SetImage {
+        self.entity_commands().add(SetImage {
             source,
             check_lock: true,
         });
@@ -157,7 +157,7 @@ pub trait SetImageUncheckedExt {
 
 impl SetImageUncheckedExt for UiStyleUnchecked<'_> {
     fn image(&mut self, source: ImageSource) -> &mut Self {
-        self.commands.add(SetImage {
+        self.entity_commands().add(SetImage {
             source,
             check_lock: false,
         });
@@ -286,7 +286,7 @@ pub trait SetFluxInteractionExt {
 
 impl SetFluxInteractionExt for UiStyle<'_> {
     fn disable_flux_interaction(&mut self) -> &mut Self {
-        self.commands.add(SetFluxInteractionEnabled {
+        self.entity_commands().add(SetFluxInteractionEnabled {
             enabled: false,
             check_lock: true,
         });
@@ -294,7 +294,7 @@ impl SetFluxInteractionExt for UiStyle<'_> {
     }
 
     fn enable_flux_interaction(&mut self) -> &mut Self {
-        self.commands.add(SetFluxInteractionEnabled {
+        self.entity_commands().add(SetFluxInteractionEnabled {
             enabled: true,
             check_lock: true,
         });
@@ -302,7 +302,7 @@ impl SetFluxInteractionExt for UiStyle<'_> {
     }
 
     fn flux_interaction_enabled(&mut self, enabled: bool) -> &mut Self {
-        self.commands.add(SetFluxInteractionEnabled {
+        self.entity_commands().add(SetFluxInteractionEnabled {
             enabled,
             check_lock: true,
         });
@@ -318,7 +318,7 @@ pub trait SetFluxInteractionUncheckedExt {
 
 impl SetFluxInteractionUncheckedExt for UiStyleUnchecked<'_> {
     fn disable_flux_interaction(&mut self) -> &mut Self {
-        self.commands.add(SetFluxInteractionEnabled {
+        self.entity_commands().add(SetFluxInteractionEnabled {
             enabled: false,
             check_lock: false,
         });
@@ -326,7 +326,7 @@ impl SetFluxInteractionUncheckedExt for UiStyleUnchecked<'_> {
     }
 
     fn enable_flux_interaction(&mut self) -> &mut Self {
-        self.commands.add(SetFluxInteractionEnabled {
+        self.entity_commands().add(SetFluxInteractionEnabled {
             enabled: true,
             check_lock: false,
         });
@@ -334,7 +334,7 @@ impl SetFluxInteractionUncheckedExt for UiStyleUnchecked<'_> {
     }
 
     fn flux_interaction_enabled(&mut self, enabled: bool) -> &mut Self {
-        self.commands.add(SetFluxInteractionEnabled {
+        self.entity_commands().add(SetFluxInteractionEnabled {
             enabled,
             check_lock: false,
         });
@@ -350,7 +350,7 @@ pub trait SetNodeShowHideExt {
 
 impl SetNodeShowHideExt for UiStyle<'_> {
     fn show(&mut self) -> &mut Self {
-        self.commands
+        self.entity_commands()
             .add(SetVisibility {
                 visibility: Visibility::Inherited,
                 check_lock: true,
@@ -363,7 +363,7 @@ impl SetNodeShowHideExt for UiStyle<'_> {
     }
 
     fn hide(&mut self) -> &mut Self {
-        self.commands
+        self.entity_commands()
             .add(SetVisibility {
                 visibility: Visibility::Hidden,
                 check_lock: true,
@@ -377,7 +377,7 @@ impl SetNodeShowHideExt for UiStyle<'_> {
 
     fn render(&mut self, render: bool) -> &mut Self {
         if render {
-            self.commands
+            self.entity_commands()
                 .add(SetVisibility {
                     visibility: Visibility::Inherited,
                     check_lock: true,
@@ -387,7 +387,7 @@ impl SetNodeShowHideExt for UiStyle<'_> {
                     check_lock: true,
                 });
         } else {
-            self.commands
+            self.entity_commands()
                 .add(SetVisibility {
                     visibility: Visibility::Hidden,
                     check_lock: true,
@@ -410,7 +410,7 @@ pub trait SetNodeShowHideUncheckedExt {
 
 impl SetNodeShowHideUncheckedExt for UiStyleUnchecked<'_> {
     fn show(&mut self) -> &mut Self {
-        self.commands
+        self.entity_commands()
             .add(SetVisibility {
                 visibility: Visibility::Inherited,
                 check_lock: false,
@@ -423,7 +423,7 @@ impl SetNodeShowHideUncheckedExt for UiStyleUnchecked<'_> {
     }
 
     fn hide(&mut self) -> &mut Self {
-        self.commands
+        self.entity_commands()
             .add(SetVisibility {
                 visibility: Visibility::Hidden,
                 check_lock: false,
@@ -438,7 +438,7 @@ impl SetNodeShowHideUncheckedExt for UiStyleUnchecked<'_> {
 
     fn render(&mut self, render: bool) -> &mut Self {
         if render {
-            self.commands
+            self.entity_commands()
                 .add(SetVisibility {
                     visibility: Visibility::Inherited,
                     check_lock: false,
@@ -448,7 +448,7 @@ impl SetNodeShowHideUncheckedExt for UiStyleUnchecked<'_> {
                     check_lock: false,
                 });
         } else {
-            self.commands
+            self.entity_commands()
                 .add(SetVisibility {
                     visibility: Visibility::Hidden,
                     check_lock: false,
@@ -522,7 +522,7 @@ pub trait SetAbsolutePositionExt {
 
 impl SetAbsolutePositionExt for UiStyle<'_> {
     fn absolute_position(&mut self, position: Vec2) -> &mut Self {
-        self.commands.add(SetAbsolutePosition {
+        self.entity_commands().add(SetAbsolutePosition {
             absolute_position: position,
             check_lock: true,
         });
@@ -536,7 +536,7 @@ pub trait SetAbsolutePositionUncheckedExt {
 
 impl SetAbsolutePositionUncheckedExt for UiStyleUnchecked<'_> {
     fn absolute_position(&mut self, position: Vec2) -> &mut Self {
-        self.commands.add(SetAbsolutePosition {
+        self.entity_commands().add(SetAbsolutePosition {
             absolute_position: position,
             check_lock: false,
         });
@@ -730,7 +730,7 @@ pub trait SetLockedAttributeExt {
 
 impl SetLockedAttributeExt for UiStyle<'_> {
     fn lock_attribute(&mut self, attribute: LockableStyleAttribute) -> &mut Self {
-        self.commands.add(SetLockedAttribute {
+        self.entity_commands().add(SetLockedAttribute {
             attribute,
             locked: true,
         });
@@ -744,7 +744,7 @@ pub trait SetLockedAttributeUncheckedExt {
 
 impl SetLockedAttributeUncheckedExt for UiStyleUnchecked<'_> {
     fn unlock_attribute(&mut self, attribute: LockableStyleAttribute) -> &mut Self {
-        self.commands.add(SetLockedAttribute {
+        self.entity_commands().add(SetLockedAttribute {
             attribute,
             locked: false,
         });

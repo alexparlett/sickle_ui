@@ -14,9 +14,9 @@ use bevy::{
     state::state::{FreelyMutableState, NextState, States},
     text::{Text, TextSection, TextStyle},
     ui::Interaction,
-    window::{CursorIcon, PrimaryWindow, Window},
+    window::{PrimaryWindow, Window},
 };
-
+use bevy::render::view::cursor::CursorIcon;
 use crate::{
     flux_interaction::{
         FluxInteraction, FluxInteractionStopwatchLock, StopwatchLock, TrackedInteraction,
@@ -50,7 +50,7 @@ pub trait SetTextSectionsExt {
 
 impl SetTextSectionsExt for EntityCommands<'_> {
     fn set_text_sections(&mut self, sections: Vec<TextSection>) -> &mut Self {
-        self.add(SetTextSections { sections });
+        self.reborrow().add(SetTextSections { sections });
         self
     }
 }
@@ -80,7 +80,7 @@ pub trait SetTextExt {
 
 impl SetTextExt for EntityCommands<'_> {
     fn set_text(&mut self, text: impl Into<String>, style: Option<TextStyle>) -> &mut Self {
-        self.add(SetText {
+        self.reborrow().add(SetText {
             text: text.into(),
             style: style.unwrap_or_default(),
         });
@@ -118,7 +118,7 @@ pub trait UpdateTextExt {
 
 impl UpdateTextExt for EntityCommands<'_> {
     fn update_text(&mut self, text: impl Into<String>) -> &mut Self {
-        self.add(UpdateText { text: text.into() });
+        self.reborrow().add(UpdateText { text: text.into() });
 
         self
     }
@@ -131,13 +131,13 @@ struct SetCursor {
 
 impl Command for SetCursor {
     fn apply(self, world: &mut World) {
-        let mut q_window = world.query_filtered::<&mut Window, With<PrimaryWindow>>();
-        let Ok(mut window) = q_window.get_single_mut(world) else {
+        let mut q_cursor = world.query_filtered::<(Entity, &CursorIcon), With<PrimaryWindow>>();
+        let Ok((entity, cursor)) = q_cursor.get_single_mut(world) else {
             return;
         };
 
-        if window.cursor.icon != self.cursor {
-            window.cursor.icon = self.cursor;
+        if cursor.eq(&self.cursor) {
+            world.entity_mut(entity).insert(self.cursor);
         }
     }
 }
@@ -148,7 +148,7 @@ pub trait SetCursorExt<'w, 's, 'a> {
 
 impl<'w, 's, 'a> SetCursorExt<'w, 's, 'a> for Commands<'w, 's> {
     fn set_cursor(&mut self, cursor: CursorIcon) {
-        self.add(SetCursor { cursor });
+        self.reborrow().add(SetCursor { cursor });
     }
 }
 
@@ -277,7 +277,7 @@ impl LogHierarchyExt for EntityCommands<'_> {
     ///                └── Node
     /// </pre>
     fn log_hierarchy(&mut self, component_filter: Option<fn(ComponentInfo) -> bool>) -> &mut Self {
-        self.add(LogHierarchy {
+        self.reborrow().add(LogHierarchy {
             level: 0,
             is_last: true,
             trace_levels: vec![],
@@ -294,7 +294,8 @@ pub trait EntityCommandsNamedExt {
 
 impl EntityCommandsNamedExt for EntityCommands<'_> {
     fn named(&mut self, name: impl Into<String>) -> &mut Self {
-        self.insert(Name::new(name.into()))
+        self.reborrow().insert(Name::new(name.into()));
+        self
     }
 }
 
@@ -309,7 +310,7 @@ impl RefreshThemeExt for EntityCommands<'_> {
     where
         C: DefaultTheme,
     {
-        self.add(RefreshEntityTheme::<C> {
+        self.reborrow().add(RefreshEntityTheme::<C> {
             context: PhantomData,
         });
         self
@@ -516,7 +517,7 @@ pub trait ManageFluxInteractionStopwatchLockExt {
 
 impl ManageFluxInteractionStopwatchLockExt for EntityCommands<'_> {
     fn lock_stopwatch(&mut self, owner: &'static str, duration: StopwatchLock) -> &mut Self {
-        self.add(move |entity, world: &mut World| {
+        self.reborrow().add(move |entity, world: &mut World| {
             if let Some(mut lock) = world.get_mut::<FluxInteractionStopwatchLock>(entity) {
                 lock.lock(owner, duration);
             } else {
@@ -529,7 +530,7 @@ impl ManageFluxInteractionStopwatchLockExt for EntityCommands<'_> {
     }
 
     fn try_release_stopwatch_lock(&mut self, lock_of: &'static str) -> &mut Self {
-        self.add(move |entity, world: &mut World| {
+        self.reborrow().add(move |entity, world: &mut World| {
             if let Some(mut lock) = world.get_mut::<FluxInteractionStopwatchLock>(entity) {
                 lock.release(lock_of);
             }
@@ -545,7 +546,7 @@ pub trait ManagePseudoStateExt {
 
 impl ManagePseudoStateExt for EntityCommands<'_> {
     fn add_pseudo_state(&mut self, state: PseudoState) -> &mut Self {
-        self.add(move |entity, world: &mut World| {
+        self.reborrow().add(move |entity, world: &mut World| {
             let pseudo_states = world.get_mut::<PseudoStates>(entity);
 
             if let Some(mut pseudo_states) = pseudo_states {
@@ -564,7 +565,7 @@ impl ManagePseudoStateExt for EntityCommands<'_> {
     }
 
     fn remove_pseudo_state(&mut self, state: PseudoState) -> &mut Self {
-        self.add(move |entity, world: &mut World| {
+        self.reborrow().add(move |entity, world: &mut World| {
             let Some(mut pseudo_states) = world.get_mut::<PseudoStates>(entity) else {
                 return;
             };
@@ -585,7 +586,7 @@ pub trait UpdateStatesExt<'w, 's, 'a> {
 
 impl<'w, 's, 'a> UpdateStatesExt<'w, 's, 'a> for Commands<'w, 's> {
     fn next_state<C: States + FreelyMutableState>(&mut self, state: C) {
-        self.add(|world: &mut World| {
+        self.reborrow().add(|world: &mut World| {
             if let Some(mut old_state) = world.get_resource_mut::<NextState<C>>() {
                 old_state.set(state);
             } else {

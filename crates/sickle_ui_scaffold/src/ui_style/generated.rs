@@ -28,9 +28,6 @@ enum _StyleAttributes {
     Overflow {
         overflow: Overflow,
     },
-    Direction {
-        direction: Direction,
-    },
     #[animatable]
     Left {
         left: Val,

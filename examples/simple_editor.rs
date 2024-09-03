@@ -1,6 +1,7 @@
 //! An example using the widget library to create a simple 3D scene view with a hierarchy browser for the scene asset.
 use bevy::prelude::*;
-
+use bevy::render::view::cursor::CursorIcon;
+use bevy::window::SystemCursorIcon;
 use ease::Ease;
 use sickle_ui::{
     dev_panels::{
@@ -736,7 +737,7 @@ fn clear_content_on_menu_change(
 ) {
     let root_entity = root_node.single();
     commands.entity(root_entity).despawn_descendants();
-    commands.set_cursor(CursorIcon::Default);
+    commands.set_cursor(CursorIcon::System(SystemCursorIcon::Default));
 }
 
 fn spawn_hierarchy_view(

@@ -4,7 +4,7 @@ use bevy::{
     prelude::*,
     time::Stopwatch,
 };
-
+use bevy::window::WindowMode;
 use sickle_macros::UiContext;
 use sickle_math::ease::Ease;
 use sickle_ui::{
@@ -26,7 +26,7 @@ fn main() {
             primary_window: Some(Window {
                 title: "Sickle UI -  Hundred Themes".into(),
                 present_mode: bevy::window::PresentMode::Immediate,
-                mode: bevy::window::WindowMode::BorderlessFullscreen,
+                mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
                 ..default()
             }),
             ..default()

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
+use bevy::render::view::cursor::CursorIcon;
 use bevy::ui::RelativeCursorPosition;
-
+use bevy::window::SystemCursorIcon;
 use sickle_ui_scaffold::{prelude::*, ui_commands::SetCursorExt};
 
 use super::container::UiContainerExt;
@@ -43,21 +44,21 @@ fn update_cursor_on_resize_handles(
         > 1;
 
     // TODO: use the correct diagonal when the active handles have the same parent
-    let omni_cursor = CursorIcon::Move;
+    let omni_cursor = CursorIcon::System(SystemCursorIcon::Move);
 
     for (handle, flux) in &q_flux {
         match *flux {
             FluxInteraction::PointerEnter => {
                 if !*locked {
                     new_cursor = match multiple_active {
-                        true => omni_cursor.into(),
+                        true => Some(omni_cursor.clone()),
                         false => handle.direction.cursor().into(),
                     };
                 }
             }
             FluxInteraction::Pressed => {
                 new_cursor = match multiple_active {
-                    true => omni_cursor.into(),
+                    true => Some(omni_cursor.clone()),
                     false => handle.direction.cursor().into(),
                 };
                 *locked = true;
@@ -65,18 +66,18 @@ fn update_cursor_on_resize_handles(
             FluxInteraction::Released => {
                 *locked = false;
                 if new_cursor.is_none() {
-                    new_cursor = CursorIcon::Default.into();
+                    new_cursor = Some(CursorIcon::System(SystemCursorIcon::Default));
                 }
             }
             FluxInteraction::PressCanceled => {
                 *locked = false;
                 if new_cursor.is_none() {
-                    new_cursor = CursorIcon::Default.into();
+                    new_cursor = Some(CursorIcon::System(SystemCursorIcon::Default));
                 }
             }
             FluxInteraction::PointerLeave => {
                 if !*locked && new_cursor.is_none() {
-                    new_cursor = CursorIcon::Default.into();
+                    new_cursor = Some(CursorIcon::System(SystemCursorIcon::Default));
                 }
             }
             _ => (),
@@ -104,14 +105,14 @@ pub enum ResizeDirection {
 impl ResizeDirection {
     pub fn cursor(&self) -> CursorIcon {
         match self {
-            ResizeDirection::North => CursorIcon::NResize,
-            ResizeDirection::NorthEast => CursorIcon::NeResize,
-            ResizeDirection::East => CursorIcon::EResize,
-            ResizeDirection::SouthEast => CursorIcon::SeResize,
-            ResizeDirection::South => CursorIcon::SResize,
-            ResizeDirection::SouthWest => CursorIcon::SwResize,
-            ResizeDirection::West => CursorIcon::WResize,
-            ResizeDirection::NorthWest => CursorIcon::NwResize,
+            ResizeDirection::North => CursorIcon::System(SystemCursorIcon::NResize),
+            ResizeDirection::NorthEast => CursorIcon::System(SystemCursorIcon::NeResize),
+            ResizeDirection::East => CursorIcon::System(SystemCursorIcon::EResize),
+            ResizeDirection::SouthEast => CursorIcon::System(SystemCursorIcon::SeResize),
+            ResizeDirection::South => CursorIcon::System(SystemCursorIcon::SResize),
+            ResizeDirection::SouthWest => CursorIcon::System(SystemCursorIcon::SwResize),
+            ResizeDirection::West => CursorIcon::System(SystemCursorIcon::WResize),
+            ResizeDirection::NorthWest => CursorIcon::System(SystemCursorIcon::NwResize),
         }
     }
 

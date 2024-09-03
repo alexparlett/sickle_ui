@@ -114,7 +114,7 @@ pub trait SetLabelTextExt {
 
 impl SetLabelTextExt for EntityCommands<'_> {
     fn set_label_text(&mut self, text: impl Into<String>) -> &mut Self {
-        self.add(UpdateLabelText { text: text.into() });
+        self.reborrow().add(UpdateLabelText { text: text.into() });
 
         self
     }
