@@ -118,7 +118,7 @@ impl UiBuilder<'_, Entity> {
         self
     }
 
-    pub fn observe_global<E: Event, B: Bundle, M>(&mut self, target:Entity, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
+    pub fn observe_global<E: Event, B: Bundle, M>(&mut self, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
         self.insert(Observer::new(system));
         self
     }
