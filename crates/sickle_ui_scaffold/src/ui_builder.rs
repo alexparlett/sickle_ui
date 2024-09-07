@@ -109,7 +109,7 @@ impl UiBuilder<'_, Entity> {
     }
 
     pub fn observe<E: Event, B: Bundle, M>(&mut self, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
-        self.entity_commands().observe(system);
+        self.insert(Observer::new(system).with_entity(self.id()));
         self
     }
 
