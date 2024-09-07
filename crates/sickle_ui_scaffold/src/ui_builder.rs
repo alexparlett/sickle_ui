@@ -114,8 +114,7 @@ impl UiBuilder<'_, Entity> {
     }
 
     pub fn observe_target<E: Event, B: Bundle, M>(&mut self, target:Entity, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
-        let observer = Observer::new(system).with_entity(target);
-        self.commands.spawn(observer);
+        self.commands.entity(target).observe(system);
         self
     }
 
