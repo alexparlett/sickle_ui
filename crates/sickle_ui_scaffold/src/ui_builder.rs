@@ -109,17 +109,18 @@ impl UiBuilder<'_, Entity> {
     }
 
     pub fn observe<E: Event, B: Bundle, M>(&mut self, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
-        self.insert(Observer::new(system).with_entity(self.id()));
+        self.entity_commands().observe(system);
         self
     }
 
     pub fn observe_target<E: Event, B: Bundle, M>(&mut self, target:Entity, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
-        self.insert(Observer::new(system).with_entity(target));
+        let observer = Observer::new(system).with_entity(target);
+        self.commands.spawn(observer);
         self
     }
 
     pub fn observe_global<E: Event, B: Bundle, M>(&mut self, system: impl IntoObserverSystem<E, B, M>) -> &mut Self {
-        self.insert(Observer::new(system));
+        self.commands.observe(system);
         self
     }
 }
